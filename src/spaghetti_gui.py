@@ -3,6 +3,7 @@ import PyQt5.QtGui as qtg
 import numpy as np
 from datetime import datetime
 import cv2
+import os
 
 
 
@@ -111,7 +112,7 @@ class MainWindow(qtw.QWidget):
 
     def update_fractal_pattern(self, new_pattern):
         self.default_fractal_pattern = self.fractal_picker.currentData()
-        self.default_image_path = f'{""}{self.fractal_picker.currentData()}_{datetime.now().strftime("%d%m%Y")}.png'
+        self.default_image_path = os.path.join('images', f'{self.fractal_picker.currentData()}_{datetime.now().strftime("%d%m%Y")}.png')
         self.entry_box.setText(self.default_image_path)
         self.main_label.setText(f'Filepath: {self.entry_box.text()}\nPattern: {new_pattern}')
 
