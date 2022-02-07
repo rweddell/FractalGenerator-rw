@@ -1,0 +1,7 @@
+1. create window and display
+2. display image
+3. accept user input
+4. apply user input to back end calculations
+5. create image with back end calculations
+6. display new image in ui
+7. allow user to save image
