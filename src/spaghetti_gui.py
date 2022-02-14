@@ -6,9 +6,33 @@ import cv2
 import os
 
 
-
 def mandelbrot_set(x_dim, y_dim):
-    pass
+
+    max_iter = 80
+    re_start = -2
+    re_end = 2
+    im_start = -1
+    im_end = 1
+
+    image = np.zeros((x_dim, y_dim))
+
+    def mandelbrot_fractal(comp=90, max_iter=80):
+        z = 0
+        n = 0
+        while abs(z) <= 2 and n < max_iter:
+            z = z*z + comp
+            n += 1
+        return n
+    
+    for x in range(x_dim):
+        for y in range(y_dim):
+            c = complex(re_start+(x/x_dim)*(re_end - re_start),
+                im_start+(y/y_dim)*(im_end-im_start))
+            m = mandelbrot_fractal(c, max_iter)
+            image[x][y] = 255 - int(m*255/max_iter)
+
+    return image
+
 
 def julia_set(x_dim, y_dim):
     scale = int(x_dim*0.6)
@@ -28,6 +52,10 @@ def barnesly_fern(x_dim, y_dim):
     pass
 
 def binary_tree(x_dim, y_dim):
+    # start point
+    # angle is 90
+    # draw line for length 
+    # recurse?
     pass
 
 def koch_snowflake(x_dim, y_dim):
