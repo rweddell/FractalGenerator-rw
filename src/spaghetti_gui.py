@@ -51,11 +51,14 @@ def julia_set(x_dim, y_dim):
 def barnesly_fern(x_dim, y_dim):
     pass
 
-def binary_tree(x_dim, y_dim):
+def binary_tree(x_dim, y_dim, theta=0.05):
     # start point
     # angle is 90
     # draw line for length 
     # recurse?
+    trunk_len = y_dim//2
+    delta_x = trunk_len * np.cos()
+    delta_y = trunk_len * np.cos()
     pass
 
 def koch_snowflake(x_dim, y_dim):
