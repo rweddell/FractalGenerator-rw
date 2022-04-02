@@ -72,6 +72,8 @@ class MainWindow(qtw.QWidget):
         DEFAULT_FONT_SIZE = 12
         self.height=200
         self.width=200
+        self.fractal_image = None
+        self.display = qtg.QPixmap()
         self.default_fractal_pattern = 'binary_tree'
         self.default_image_path = f'{self.default_fractal_pattern}_{datetime.now().strftime("%d%m%Y")}.png'
 
@@ -79,18 +81,23 @@ class MainWindow(qtw.QWidget):
 
         fractal_form = qtw.QFormLayout()
         self.setLayout(fractal_form)
+
         
         # self.setLayout(qtw.QVBoxLayout())
         self.fractal_picker = qtw.QComboBox(self)
         self.fractal_picker.setObjectName('Fractals')
-        self.fractal_picker.setToolTip("curvehoose a fractal pattern")
+        self.fractal_picker.setToolTip("Choose a fractal pattern")
         self.fractal_picker.setFont(qtg.QFont('Helvetica', DEFAULT_FONT_SIZE))
-        self.fractal_picker.addItem('Binary Tree', 'binary_tree')
-        self.fractal_picker.addItem('Barnesly Fern', 'barnesly')
-        self.fractal_picker.addItem("Koch Snowflake", 'koch')
-        self.fractal_picker.addItem('Julia Set', 'julia')
-        self.fractal_picker.addItem('Mandelbrot Set', 'mandelbrot') 
-
+        
+        fractal_ref = {
+            'Binary Tree': 'binary_tree',
+            'Barnesly Fern': 'barnesly',
+            "Koch Snowflake": 'koch',
+            'Julia Set': 'julia',
+            'Mandelbrot Set': 'mandelbrot'
+        }
+        for fractal in fractal_ref:
+            self.fractal_picker.addItem(fractal, fractal_ref[fractal])
 
         self.fractal_picker.currentTextChanged.connect(self.update_fractal_pattern)
 
@@ -121,9 +128,9 @@ class MainWindow(qtw.QWidget):
         self.height_picker.setSpecialValueText('Image height (0 - 1080)')
         self.height_picker.setFont(qtg.QFont('Helvetica', DEFAULT_FONT_SIZE))
 
-        self.start_button = qtw.QPushButton('START',clicked = self.create_fractal_image)
+        self.start_button = qtw.QPushButton('START', clicked=self.create_fractal_image)
 
-        self.save_button = qtw.QPushButton('SAVE',clicked = self.save_fractal_image)
+        self.save_button = qtw.QPushButton('SAVE', clicked=self.save_fractal_image)
 
         # Doesn't seem to work unless rows and widgets are both added
         self.layout().addWidget(self.main_label)
@@ -150,6 +157,7 @@ class MainWindow(qtw.QWidget):
     def create_fractal_image(self):
         width = self.width_picker.value()
         height = self.height_picker.value()
+        # TODO: if these are moved into modules, keep in mind to import them directly or change this line
         pattern_matcher = {
             'binary_tree': binary_tree,
             'mandelbrot': mandelbrot_set,
@@ -157,14 +165,17 @@ class MainWindow(qtw.QWidget):
             'julia': julia_set,
             'koch': koch_snowflake
         }
-        return pattern_matcher[self.default_fractal_pattern](width, height)
+        self.fractal_image = pattern_matcher[self.default_fractal_pattern](width, height)
+        label = qtw.QLabel(self)
+        pixmap = qtg.QPixmap(qtg.QImage(self.fractal_image, self.fractal_image.shape[0], self.fractal_image.shape[0]))
+        label.setPixmap(pixmap)
         
-    def save_fractal_image(self, fractal_image, path=None):
+    def save_fractal_image(self, path=None):
         self.main_label.setText(f'Filepath: {self.entry_box.text()}\nPattern: {self.fractal_picker.currentText()}')
         if not path:
             path = self.default_image_path
         try:
-            cv2.imwrite(path, fractal_image)
+            cv2.imwrite(path, self.fractal_image)
             self.main_label.setText(f'Saving image at: {path}')
         except Exception as problem:
             error_string = f'There was a problem saving the image: \n{problem}'
